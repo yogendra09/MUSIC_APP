@@ -4,19 +4,21 @@ import {
   asyncCurrentUser,
   asyncUploadMusic,
   asyncUserImage,
+  asyncUserLogout,
 } from "@/store/Actions/userAction";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FaUpload } from "react-icons/fa";
 import { IoCloudUploadOutline } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
-
+import  Cookies from "js-cookie"
 const page = () => {
   const [music, setmusic] = useState("");
   const { user } = useSelector((state) => state.userReducer);
   const { likedSong } = useSelector((state) => state.userReducer);
   const dispatch = useDispatch();
-
+  const router = useRouter();
   const uploadMusicHandler = (e) => {
     e.preventDefault();
     if (music === "") {
@@ -29,6 +31,13 @@ const page = () => {
     dispatch(asyncUploadMusic(formdata));
     // dispatch(asyncCurrentUser());
   };
+
+  const logoutHandler = ()=>{
+    dispatch(asyncUserLogout());
+    Cookies.remove("token")
+    router.push("/login");
+    
+  }
 
   return (
     <div className="h-max-[93vh] bg-black text-white !overflow-auto">
@@ -63,6 +72,9 @@ const page = () => {
           >
             uploaded songs
           </Link>
+          <button onClick={logoutHandler} className="px-[1vh] py-[.5vh] rounded mt-[2vh] bg-red-400 text-xs text-gray-600]">
+            Logout
+            </button>
         </div>
       </div>
 

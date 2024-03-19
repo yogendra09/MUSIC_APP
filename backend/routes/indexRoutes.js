@@ -14,6 +14,7 @@ const {
   updateImage,
   uploadImage,
   getImage,
+  userLogout,
 } = require("../controllers/indexController");
 const { isAuthenticated } = require("../middlewares/auth");
 const multer = require("multer");
@@ -29,6 +30,7 @@ router.post("/register", userRegister);
 
 // user login
 router.post("/login", userLogin);
+router.post("/logout", isAuthenticated ,userLogout);
 
 router.post("/updateProfile", isAuthenticated, updateProfile);
 
@@ -39,7 +41,7 @@ const upload = multer({storage}) ;
 
 router.post("/uploadimage", isAuthenticated,upload.single("image"),uploadImage);
 
-router.get("/getimage/:fileId", isAuthenticated,getImage);
+router.get("/getimage/:fileId",getImage);
 
 
 module.exports = router;

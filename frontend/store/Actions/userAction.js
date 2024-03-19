@@ -33,6 +33,15 @@ export const asyncUserLogin = (userObj) => async (dispatch, getstate) => {
     toast.error(error?.response?.data.message || error);
   }
 };
+export const asyncUserLogout = () => async (dispatch, getstate) => {
+  try {
+    const { data } = await axios.post("/logout");
+    dispatch(removeUser());
+  } catch (error) {
+    toast.error(error?.response?.data.message || error);
+    toast.error(error?.response?.data.message || error);
+  }
+};
 
 export const asyncUserRegister = (userObj) => async (dispatch, getstate) => {
   try {

@@ -17,10 +17,10 @@ const path = require("path");
 
 const conn = mongoose.connection;
 
-var gfsBucket, gfsBucketPoster;
+var gfsImageBucket;
 
 conn.once("open", () => {
-  gfsBucket = new mongoose.mongo.GridFSBucket(conn.db, {
+  gfsImageBucket = new mongoose.mongo.GridFSBucket(conn.db, {
     bucketName: "image",
   });
 });
@@ -95,7 +95,7 @@ exports.uploadImage = catchAsyncErrors(async (req, res, next) => {
   const randomName = crypto.randomBytes(20).toString("hex");
 
   const imageData = id3.read(req.file.buffer);
-  Readable.from(req.file.buffer).pipe(gfsBucket.openUploadStream(randomName));
+  Readable.from(req.file.buffer).pipe(gfsImageBucket.openUploadStream(randomName));
   loggedInUser.image = { fileId: randomName, url: randomName };
   await loggedInUser.save();
   res
@@ -105,8 +105,24 @@ exports.uploadImage = catchAsyncErrors(async (req, res, next) => {
 
 exports.getImage = catchAsyncErrors(async (req, res, next) => {
   try {
-    gfsBucket.openDownloadStreamByName(req.params.fileId).pipe(res);
+    gfsImageBucket.openDownloadStreamByName(req.params.fileId).pipe(res);
   } catch (error) {
     console.log(error);
   }
+});
+
+
+exports.userLogout = catchAsyncErrors(async (req, res, next) => {
+  const user = req.user;
+  const token = user.getjwttoken();
+
+  const option = {
+    exipres: new Date(0),
+    httpOnly: true,
+    // secure:true
+  };
+  res
+    .status(200)
+    .cookie("token",'', option)
+    .json({ message: "user logout!" });
 });

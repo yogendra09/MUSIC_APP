@@ -32,7 +32,6 @@ const page = () => {
       password,
     };
     dispatch(asyncUserRegister(newUser));
-    // dispatch(asyncCurrentUser());
   };
   useEffect(() => {
     if (isAuthenticated) router.push("/auth");
